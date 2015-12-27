@@ -24,7 +24,7 @@
 % simulate_and_get_influx([0.95 0.025 0 0 0.025 0 0], [0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.1], 1, 30, 360)
 
 
-function [state, I, G ] = simulate_and_get_influx(...
+function [state, I] = simulate_and_get_influx(...
     start_state, ... % start state
     params,      ... % params: see above
     delta_t,     ... % time step for simutation
@@ -33,28 +33,21 @@ function [state, I, G ] = simulate_and_get_influx(...
     )
     
     I = [];
-    G = [];
     
     current_state = start_state;
     t = 0;
     current_period = 0;
     current_i_influx = 0;
-    current_g_influx = 0;
     while(t < period)
-        [current_state, i_influx, g_influx] = ...
+        [current_state, i_influx] = ...
             simulate_single_step(current_state, params, delta_t);
         current_i_influx = current_i_influx + i_influx;
-        current_g_influx = current_g_influx + g_influx;
 
         current_period = current_period + delta_t;
         
         if (current_period >= accumulation_period)
             I = [I current_i_influx];
             current_i_influx = 0;
-            
-            G = [G current_g_influx];
-            current_g_influx = 0;
-
             current_period = 0;
         end
 
